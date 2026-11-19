@@ -2,24 +2,66 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// https://astro.build/config
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
+
 export default defineConfig({
+	site: 'https://www.pithus.org',
 	integrations: [
 		starlight({
-			title: 'My Docs',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			title: 'Pithus',
+			logo: {
+        		src: './src/assets/logo.png',
+	      	},
+			customCss: ['./src/styles/custom.css'],
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/pithus/bazaar' },
+				{ icon: 'discord', label: 'discord', href: 'https://discord.gg/PgdKfp4VMQ' },
+			],
+			pagination: true,
+			editLink: {
+    		    baseUrl: 'https://github.com/Pithus/pithus.github.io/edit/main/docs/',
+      		},
 			sidebar: [
 				{
-					label: 'Guides',
+					label: 'Getting started',
 					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{autogenerate: { directory: 'getting-started' } },
 					],
 				},
-				{
-					label: 'Reference',
-					items: [{ autogenerate: { directory: 'reference' } }],
+				{ label: 'Reference',
+					items: [
+						{ slug: 'reference/overview' },
+						{label: 'Interface',
+						 items: [
+							{ slug: 'reference/interface/homepage' },
+							{ slug: 'reference/interface/search' },
+							{ label: 'Report',
+								items: [
+									{ autogenerate: {
+											directory: 'reference/interface/report',
+										},
+									},
+								],
+							},
+							{ slug: 'reference/interface/workspace' },
+							{ slug: 'reference/interface/comparison' },
+						]},
+					{ slug: 'reference/api-client' },
+					...openAPISidebarGroups,
+					],
 				},
+			],
+			components: {
+        		Hero: './src/components/Hero.astro',
+				Footer: './src/components/Footer.astro',
+				Header: './src/components/Header.astro',
+      		},
+			plugins: [
+				starlightOpenAPI([{
+					base: 'api',
+					label: 'Pithus API',
+					schema: './openapi/openapi.yml',
+				}]),
 			],
 		}),
 	],
