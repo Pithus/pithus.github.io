@@ -1,0 +1,405 @@
+---
+title: Pythus API Client
+description: using the Pythus API client for Pithus
+sidebar:
+  order: 2
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+Pythus is a Python client for interacting with the Pithus API.
+
+It provides two ways to interact with a Pithus instance:
+
+- Command-line interface (CLI): Execute API operations directly from a terminal.
+- Python library: Integrate Pithus API operations into your own Python scripts and applications.
+
+The client supports operations such as searching for applications, retrieving analysis reports, checking report status, and uploading or downloading APK files.
+
+The source code is available in the [Pithus/pythus GitHub repository](https://github.com/Pithus/pythus).
+
+## Prerequisites
+
+Before using Pythus, you need:
+
+- Access to a running Pithus instance with authentication enabled
+- A valid Pithus API key
+- Python 3.14 or later
+
+
+### Getting your API key
+
+Pythus uses API key authentication to communicate with your instance.
+
+To retrieve your API key:
+
+- Log in to your Pithus instance
+- Navigate to the Workspace section
+- On the left side menu, click on the `API key`
+
+Keep your API key confidential. Anyone with access to it may be able to perform API operations using your account's permissions.
+
+### Installation
+
+Clone the Pythus repository:
+
+```bash
+git clone https://github.com/Pithus/pythus.git
+cd pythus
+```
+
+Build the Python package using Poetry:
+
+```bash
+poetry build
+```
+
+Install the generated wheel:
+
+```bash
+pip install dist/pythus-0.1.0-py3-none-any.whl
+```
+Note: The version in the installation command should match the version of the generated wheel in your dist/ directory.
+
+The package exposes the `pythus` command-line executable and the `pythus` Python module.
+
+
+### Configuration
+
+Pythus needs three main connection parameters:
+
+|Parameter|	Description |	Default|
+|--- |--- |--- |
+|host|	Hostname or IP address of the Pithus instance|	Not configured|
+|port|	API port|	80|
+|api_key|	API authentication key|	Not configured|
+|use_https|	Whether to use HTTPS|	True|
+|api_prefix|	API URL prefix|	/api/|
+
+You can provide these settings through command-line arguments, a configuration file, environment variables or directly when initializing the Python client.
+
+#### Configuration file
+
+Pythus supports TOML configuration files.
+
+Start by copying the example configuration:
+
+```bash
+cp config_example.toml config.toml
+```
+
+Edit `config.toml`:
+
+```toml
+# Pithus instance hostname
+host = "pithus.example.org"
+
+# API port
+port = 443
+
+# API authentication key
+api_key = "YOUR_API_KEY"
+
+# Use HTTPS
+use_https = true
+```
+
+Replace the hostname and API key with the values corresponding to your instance.
+
+The configuration file is automatically searched for in the following locations:
+
+ 1. ./config.toml – Current working directory.
+ 2. $XDG_CONFIG_HOME/pythus/config.toml – User configuration directory (defaults to ~/.config/pythus/config.toml).
+ 3. /etc/pythus/config.toml – System-wide configuration.
+
+Only the first existing configuration file is loaded.
+
+You can also specify a configuration file explicitly using the `--config` option:
+
+```bash
+pythus --config /path/to/config.toml list-reports
+```
+
+#### Environment variables
+
+Pythus also supports environment variables with the PYTHUS_ prefix.
+
+For example:
+
+```bash
+export PYTHUS_HOST="pithus.example.org"
+export PYTHUS_PORT=443
+export PYTHUS_API_KEY="YOUR_API_KEY"
+export PYTHUS_USE_HTTPS=true
+```
+
+The configuration can then be used without specifying connection parameters on every invocation.
+
+## Command-line interface
+
+Once installed and configured, the CLI can be accessed through the pythus command.
+
+### Global options
+
+To display the available commands and options:
+
+```bash
+$ pythus --help
+Usage: pythus [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  -h, --host TEXT       API Host address
+  -p, --port INTEGER    API port  [default: 80]
+  -k, --api-key TEXT    Your API key, can be found in the My Hunting tab of
+                        your instance
+  --https / --no-https  Use HTTP instead of HTTPS  [default: https]
+  -b, --beautify        Output pretty JSON
+  -c, --color           Output pretty JSON
+  -f, --config TEXT     Path to configuration file.
+  --install-completion  Install completion for the current shell.
+  --show-completion     Show completion for the current shell, to copy it or
+                        customize the installation.
+  --help                Show this message and exit.
+
+Commands:
+  list-reports
+  get-report
+  report-status
+  report-exists
+  list-apk
+  upload-apk
+  download-apk
+  search
+
+```
+
+The CLI provides the following commands:
+
+|Command |	Description |
+|--- |--- |
+|list-reports | List available analysis reports.|
+|get-report | Retrieve an analysis report.|
+|report-status | Retrieve the processing status of a report.|
+|report-exists | Check whether a report exists.|
+|list-apk | List available APK samples.|
+|upload-apk | Upload an APK file to Pithus.|
+|download-apk | Download an APK sample.|
+|search	| Search for applications using the Pithus search syntax.|
+
+Each command provides its own help:
+
+```bash
+$ pythus get-report --help
+Usage: pythus get-report [OPTIONS] REPORT_ID
+
+Arguments:
+  REPORT_ID  Report identifier (sha256 of the APK)  [required]
+
+Options:
+  --help  Show this message and exit.
+```
+
+
+### Listing reports
+
+Retrieve the list of available analysis reports:
+
+```bash
+pythus list-reports
+```
+
+The response is returned as JSON.
+
+To make the output easier to read:
+
+```bash
+pythus --beautify list-reports
+```
+
+### Retrieving an analysis report
+
+Reports are identified by the SHA-256 hash of the APK.
+
+Retrieve a report with:
+
+```bash
+pythus get-report SHA256_HASH
+```
+
+### Checking report status
+
+To retrieve the processing status of a report:
+
+```bash
+pythus report-status SHA256_HASH
+```
+
+### Checking whether a report exists
+
+To check whether a report exists in Pithus:
+
+```bash
+pythus report-exists SHA256_HASH
+```
+
+### Listing APK samples
+
+To retrieve the list of available APK samples:
+
+```bash
+pythus list-apk
+```
+
+### Uploading an APK and starting an analysis
+
+To upload an APK file to your Pithus instance:
+
+```bash
+pythus upload-apk /path/to/application.apk
+```
+
+
+### Downloading an APK
+
+To download an existing APK using its SHA-256 hash:
+
+```bash
+pythus download-apk SHA256_HASH
+```
+
+By default, the downloaded file is saved in the current working directory using the following filename:
+
+```text
+pithus_sample_SHA256_HASH.apk
+```
+
+You can also specify a custom output path:
+
+```bash
+pythus download-apk SHA256_HASH ./application.apk
+```
+
+### Searching for applications
+
+Pythus supports the same search syntax as the search bar on the Pithus homepage.
+
+For example:
+
+```bash
+pythus search "package_name:com.example.application"
+```
+
+Refer to the Search documentation for more information about search syntax.
+
+## Using Pythus as a Python library
+
+Pythus can also be imported into Python scripts and applications.
+
+### Initializing the client
+
+```python
+from pythus.api_client import ApiClient
+
+client = ApiClient(
+    host="pithus.example.org",
+    port=443,
+    api_key="YOUR_API_KEY",
+    use_https=True,
+)
+```
+
+Alternatively, you can initialize the client using a configuration file or environment variables:
+
+```python
+from pythus.api_client import ApiClient
+from pythus.config import Settings
+
+settings = Settings.load_settings()
+
+client = ApiClient(settings=settings)
+```
+
+### Listing reports
+
+Retrieve all available reports:
+
+```python
+reports = client.list_reports()
+```
+
+The response is returned as a Python dictionary.
+
+You can access individual reports from the response:
+
+```python
+reports = client.list_reports()
+
+for report in reports.get("reports", []):
+    print(report["apk_hash"])
+```
+
+### Getting a report
+
+Retrieve an analysis report using its SHA-256 hash:
+
+```python
+report = client.get_report(
+    "SHA256_HASH"
+)
+```
+
+Checking report status
+
+```python
+status = client.get_report_status(
+    "SHA256_HASH"
+)
+```
+
+Checking whether a report exists
+
+```python
+exists = client.get_report_exists(
+    "SHA256_HASH"
+)
+```
+
+### List APK
+
+Retrieve the available APK samples:
+
+```python
+apk_list = client.list_apk()
+```
+
+Upload an APK file by providing its local filesystem path:
+
+```python
+response = client.upload_apk(
+    "/path/to/application.apk"
+)
+```
+
+### Downloading an APK
+
+Download an APK using its SHA-256 hash:
+
+```python
+apk = client.download_apk(
+    "SHA256_HASH"
+)
+
+with open("application.apk", "wb") as f:
+    f.write(apk)
+```
+
+### Searching for applications
+
+Use the search() method to perform a search using the same query syntax as the Pithus web interface:
+
+```python
+results = client.search(
+    "package_name:com.example.application"
+)
+```

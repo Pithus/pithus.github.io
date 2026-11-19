@@ -1,0 +1,40 @@
+---
+title: Fingerprint tab
+description: describe the fingerprint tab
+sidebar:
+  order: 2
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+## File sums
+
+![fingerprint hash](/src/assets/doc/fingerprinthashes.png)
+
+File sums identify uniquely a file. Pithus displays `MD5`, `SHA1` and `SHA256` hashes. For more information about these, please read the wikipedia page: https://en.wikipedia.org/wiki/Checksum
+
+On the right side are buttons to copy the value and search the value on the internet. The internet search is done through Startpage.
+
+## APKiD
+
+![fingerprint hash](/src/assets/doc/fingerprintapkid.png)
+
+APKiD is a tool designed to identify packers, obfuscators, compilers, protectors, and other oddities in android applications. Pithus shows the result of APKiD's information.
+
+For more info about APKiD: https://github.com/rednaga/APKiD
+
+## Fuzzy Hashes
+
+![fingerprint hash](/src/assets/doc/fingerprintfuzzy.png)
+
+Fuzzy hashes are a different way of identifying a piece of data, those allows for finding similar piece of information. In the case of Pithus, they are used to find similar samples: applications that are almost identical, but not quite the same. This is useful for threat intelligence where finding patterns between threats can help uncover more information for investigation.
+
+Pithus provides several fuzzy hashing algorithms:
+ - ssdeep: a very efficient fuzzy hashing algorithm
+ - dexofuzzy: an implementation of ssdeep specifically designed for DEX files
+ - tlsh: the original fuzzy hashing algorithm
+
+Having multiple fuzzy algorithm allows to cover more ground when looking for similar samples.
+
+On the right side of the screen are buttons to copy and search in the Pithus database for sample matching the selected fuzzy hash.

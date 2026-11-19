@@ -1,0 +1,30 @@
+---
+title: Code Analysis tab
+description: describe the code analysis tab
+sidebar:
+  order: 5
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+# NIAP Analysis
+
+![niap](/src/assets/doc/codeniap.png)
+
+The NIAP analysis is the result of a security policy compliance test. This information shows which security policy the application are not applying, which can indicate potential vulnerabilities in the app's code. 
+
+NIAP is the accronym of the National Information Assurance Partnership, more information here: https://www.niap-ccevs.org
+
+# Code Analysis
+
+![cve](/src/assets/doc/codecve.png)
+
+This section gives information about the potential vulnerabilities detected in the application's code. Each entry shows:
+- the estimated risk for the application
+- the Common Vulnerability Scoring System (CVSS): https://en.wikipedia.org/wiki/Common_Vulnerability_Scoring_System
+- the vulnerability's name
+- the corresponding Common Weakness Enumeration (CWE): https://cwe.mitre.org
+- the Mobile Application Security Verification Standard (MASVS): https://mas.owasp.org/MASVS/
+
+By clicking on the eye icon on the left, Pithus will show in which part of the code the vulnerability is present, as shown in the first entry in the above screenshot.

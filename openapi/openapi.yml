@@ -1,0 +1,698 @@
+openapi: 3.0.3
+info:
+  title: Pithus API
+  version: 1.0.0-beta
+  description: "\n    Pithus REST API.\n\n    API for Android application analysis,
+    report retrieval,\n    APK uploads, search and application status monitoring.\n
+    \   "
+paths:
+  /api/apk/:
+    get:
+      operationId: list_apks
+      description: Lists uploaded APKs. Currently not implemented.
+      summary: List APKs
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '501':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: ''
+    post:
+      operationId: upload_apk
+      description: Uploads an Android APK for analysis.
+      summary: Upload APK
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApkUploadRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ApkUploadRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ApkUploadRequestRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApkUploadResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          description: No response body
+  /api/apk/{sha256}:
+    get:
+      operationId: download_sample_apk
+      description: Downloads an APK sample identified by its SHA256 hash.
+      summary: Download sample APK
+      parameters:
+      - in: path
+        name: sha256
+        schema:
+          type: string
+        description: SHA256 hash of the APK.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/report/:
+    get:
+      operationId: list_reports
+      description: Returns a list of available reports.
+      summary: List reports
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportListResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: ''
+  /api/report/{sha256}:
+    get:
+      operationId: retrieve_report
+      description: Returns the analysis report associated with the given SHA256 hash.
+        The response may be cached depending on the analysis status.
+      summary: Get report
+      parameters:
+      - in: path
+        name: sha256
+        schema:
+          type: string
+        description: SHA256 hash of the APK.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/report/{sha256}/exists:
+    get:
+      operationId: api_report_exists_retrieve
+      description: Checks whether a report exists in the configured storage.
+      summary: Check whether a report exists
+      parameters:
+      - in: path
+        name: sha256
+        schema:
+          type: string
+        description: SHA256 hash of the APK.
+        required: true
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportExistsResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportExistsResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: ''
+  /api/report/{sha256}/status:
+    get:
+      operationId: api_report_status_retrieve
+      description: Returns the analysis status and detailed status of a report.
+      summary: Get report status
+      parameters:
+      - in: path
+        name: sha256
+        schema:
+          type: string
+        description: SHA256 hash of the APK.
+        required: true
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportStatusResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/report/example:
+    get:
+      operationId: api_report_example_retrieve
+      description: Returns an example analysis report.
+      summary: Get example report
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExampleReportResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+          description: ''
+  /api/search/:
+    post:
+      operationId: api_search_create
+      description: Searches for reports using a user-provided query.
+      summary: Search
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SearchRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SearchRequestRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /api/status:
+    get:
+      operationId: api_status_retrieve
+      description: Returns the health status of the application's dependencies, including
+        the database, Elasticsearch, Redis, workers, MobSF, MalwareBazaar and VirusTotal.
+      summary: Get application status
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+          description: ''
+  /api/users/:
+    get:
+      operationId: api_users_list
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+          description: ''
+  /api/users/{username}/:
+    get:
+      operationId: api_users_retrieve
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_users_update
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_users_partial_update
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/users/me/:
+    get:
+      operationId: api_users_me_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /auth-token/:
+    post:
+      operationId: auth_token_create
+      tags:
+      - auth-token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+components:
+  schemas:
+    ApkUploadRequestRequest:
+      type: object
+      properties:
+        apk:
+          type: string
+          format: binary
+          description: Android APK file to upload.
+      required:
+      - apk
+    ApkUploadResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        file_hash:
+          type: string
+          description: SHA256 hash of the uploaded APK.
+      required:
+      - file_hash
+      - message
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+          readOnly: true
+      required:
+      - token
+    AuthTokenRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    ExampleReportResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        report: {}
+      required:
+      - report
+      - status
+    InternalServerError:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    PatchedUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        name:
+          type: string
+          title: Name of User
+          maxLength: 255
+    ReportExistsResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        requested_hash:
+          type: string
+      required:
+      - message
+      - requested_hash
+    ReportListResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        reports: {}
+      required:
+      - message
+      - reports
+    ReportResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        report: {}
+      required:
+      - message
+      - report
+    ReportStatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        report_status: {}
+        detailed_status: {}
+      required:
+      - detailed_status
+      - message
+      - report_status
+    SearchRequestRequest:
+      type: object
+      properties:
+        q:
+          type: string
+          minLength: 1
+          description: Search query.
+      required:
+      - q
+    SearchResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result: {}
+      required:
+      - message
+      - result
+    ServiceStatus:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+      required:
+      - message
+      - status
+    StatusDetails:
+      type: object
+      properties:
+        db:
+          $ref: '#/components/schemas/ServiceStatus'
+        elasticsearch:
+          $ref: '#/components/schemas/ServiceStatus'
+        redis:
+          $ref: '#/components/schemas/ServiceStatus'
+        django_q_workers:
+          type: object
+          additionalProperties:
+            type: string
+          description: Django Q worker statuses, indexed by cluster ID.
+        mobsf:
+          $ref: '#/components/schemas/ServiceStatus'
+        malware_bazaar_api_connection:
+          $ref: '#/components/schemas/ServiceStatus'
+        virustotal_api_connection:
+          $ref: '#/components/schemas/ServiceStatus'
+      required:
+      - db
+      - django_q_workers
+      - elasticsearch
+      - malware_bazaar_api_connection
+      - mobsf
+      - redis
+      - virustotal_api_connection
+    StatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusDetails'
+      required:
+      - message
+      - status
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        name:
+          type: string
+          title: Name of User
+          maxLength: 255
+        url:
+          type: string
+          format: uri
+          readOnly: true
+      required:
+      - url
+      - username
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        name:
+          type: string
+          title: Name of User
+          maxLength: 255
+      required:
+      - username
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

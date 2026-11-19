@@ -1,0 +1,110 @@
+---
+title: Report overview
+description: describe the overall report page
+sidebar:
+  order: 1
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+# Report header
+
+The report header gives a quick summary of the information reported through the analysis.
+
+![report header](/src/assets/doc/reportheader.png)
+
+## APK name
+
+In the top middle of the screen are shown the name and package name of the analyzed APK file. Right underneath is the date of the analysis.
+
+## Threat summary
+
+On the top left side of the screen is the estimated threat level. This data is computed by VirusTotal, MalwareBazaar and Quark-Engine. When malicious samples are detected, it is clearly displayed, with the number of anti-virus flagging it. The threat summary also displays the most probable threat name.
+
+## Action buttons
+
+Under the threat summary are for buttons, they are only available when logged in to the instance. They allow multiple actions, from left to right:
+- download sample: allows the user to download the original APK that was submitted for this analysis.
+- export to JSON: get a JSON object containing all the report information, this can also be obtained through the API.
+- [bookmark](/reference/interface/workspace#bookmarks): allows to bookmark the sample, it will then show up in your workspace.
+- [comparison](/reference/interface/comparison): allows to compare the current report to another sample's report using their sha256 hash.
+
+## Report stats
+
+At the bottom, five cards display quick stats about the sample, from left to right:
+- Permissions: the number of permissions the application declares and asks for.
+- Activities: the number of activities declared by the application.
+- Services: the number of services declared by the application.
+- Receivers: the number of receivers declared by the application.
+- Domains: the number of domain names found in the application code, those are some of the network endpoints the application communicates with.
+
+# Report tabs
+
+Underneath the header are the report tabs, each of those display various information about the APK.
+
+![report tabs](/src/assets/doc/reporttab.png)
+
+## Fingerprints
+
+This tab is dedicated to information identifying the application, this is where hashes and fuzzy hashes are. 
+
+<LinkCard 
+    title="Fingerprints"
+    href="/reference/interface/report/fingerprint"
+    description="Go to the fingerprint detailed page"
+/>
+
+## Threat Intel
+
+This tab is dedicated to threat intelligence information, where similar malicious sample, yara detection, and anti-virus detction are displayed.
+<LinkCard 
+    title="Threat Intel"
+    href="/reference/interface/report/threat-intel"
+    description="Go to the threat intel detailed page"
+/>
+
+## APK Analysis
+
+This tab is dedicated to information about the packaging of the application. 
+<LinkCard 
+    title="APK Analysis"
+    href="/reference/interface/report/apk-analysis"
+    description="Go to the APK analysis detailed page"
+/>
+
+## Code Analysis
+
+This tab is mostly for application developper and reverse engineers, listing vulnerabilities present in the application and detecting potentially risky code.
+<LinkCard 
+    title="Code Analysis"
+    href="/reference/interface/report/code-analysis"
+    description="Go to the code analysis detailed page"
+/>
+
+## Behavior Analysis
+
+This tab is dedicated to information about the application's behavior, listing permissions, trackers, interesting and dangerous behaviors from the code.
+<LinkCard 
+    title="Behavior Analysis"
+    href="/reference/interface/report/behavior"
+    description="Go to the behavior analysis detailed page"
+/>
+
+## Control Flow Analysis
+
+This tab shows control flow graphs of interesting and suspicious code paths. 
+<LinkCard 
+    title="Control Flow Analysis"
+    href="/reference/interface/report/cfg"
+    description="Go to the control flow analysis detailed page"
+/>
+
+## Network Analysis
+
+This tab is dedicated to information regarding the application usage of network communications.
+<LinkCard 
+    title="Network Analysis"
+    href="/reference/interface/report/network"
+    description="Go to the network analysis detailed page"
+/>

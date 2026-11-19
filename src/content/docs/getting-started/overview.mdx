@@ -1,0 +1,160 @@
+---
+title: Overview
+description: overview of Pithus
+sidebar:
+  order: 1
+prev: false
+next: installation
+---
+
+import { LinkCard, LinkButton, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+## Getting started
+
+<Aside type="note">
+The impatient reader once said:
+> I don't care about the chatter, just give me the good stuff!
+</Aside>
+
+So here are some links for you dear reader:
+
+<CardGrid>
+<LinkCard 
+    title="Tutorial: first analysis with the public instance"
+    href="/getting-started/quick-start"
+    description="Simple tutorial for beginer users"
+/>
+
+<LinkCard 
+    title="Local Installation Guide"
+    href="/getting-started/installation"
+    description="Installing a local Pithus instance for your personal needs or development"
+/>
+
+<LinkCard 
+    title="Deployment Guide"
+    href="/getting-started/installation"
+    description="Learn to deploy a Pithus instance for your organisation or for the public"
+/>
+
+<LinkCard 
+    title="Interface Reference"
+    href="/reference/interface/homepage"
+    description="Detailed description of the interface"
+/>
+</CardGrid>
+
+For more information about Pithus, read on.
+
+## What is Pithus?
+
+Pithus is a free and open-source mobile threat intelligence platform designed to analyse Android applications (APK files) and help identify potential security and privacy risks.
+
+Its primary goal is to make mobile application security analysis and threat intelligence accessible to everyone, rather than restricting these capabilities to expensive commercial solutions.
+
+Pithus is particularly relevant to security researchers, journalists, activists, non-governmental organisations (NGOs), and technical communities interested in understanding how Android applications operate, what information they may collect, and whether they exhibit potentially malicious or suspicious characteristics.
+
+By combining several established analysis tools and presenting their findings through structured reports, Pithus helps users investigate applications and better understand the mobile threat landscape.
+
+## Why use Pithus?
+
+The growing use of mobile applications has increased the importance of understanding their security and privacy implications.
+
+Applications may contain malicious components, implement intrusive tracking mechanisms, expose sensitive information, or include vulnerable configurations. However, identifying these issues can be difficult without specialised tools and technical knowledge.
+
+Pithus addresses these challenges by providing a centralised platform for Android application analysis.
+
+It aims to:
+
+- Improve transparency: Provide insight into application components, permissions, trackers, domains and other technical characteristics.
+- Support threat intelligence: Help users discover, investigate and correlate potentially suspicious applications.
+- Identify security issues: Detect potentially vulnerable configurations and suspicious code patterns.
+- Promote accessibility: Make mobile application analysis available through a free and open-source platform.
+- Facilitate investigations: Present technical findings in structured reports that can be used for further research and analysis.
+
+## Main capabilities
+
+Pithus combines several capabilities to support Android application analysis and threat intelligence investigations.
+
+### Android application analysis
+
+Pithus extracts and analyses information from Android application packages (APKs).
+
+Depending on the analysis performed, users can inspect information such as:
+
+- Application name, package identifier and version.
+- File hashes and application fingerprints.
+- Requested Android permissions.
+- Activities, services, receivers and other application components.
+- Signing certificate information.
+- Domains extracted from the application.
+- Third-party libraries and tracking components.
+- Potential security and privacy issues.
+
+### Threat intelligence
+
+Pithus provides functionality to investigate applications and discover relationships between samples.
+
+Its threat intelligence capabilities include:
+
+- Search: Find samples using queries based on Lucene query syntax.
+- Fingerprints: Search using cryptographic hashes and pivot on other fingerprints, including UAID, ssdeep and Dexofuzzy.
+- Hunting and retro-hunting: Import rule sets to search for potentially malicious applications.
+- Indicator pivoting: Investigate relationships using indicators such as domains and certificates.
+- External intelligence: Retrieve information from external services such as VirusTotal and MalwareBazaar.
+- Sample timelines: Examine information about a sample's lifespan.
+- Similar samples: Discover potentially related applications through binary similarity analysis.
+
+These capabilities help analysts move beyond examining individual APK files and explore relationships between applications.
+
+### Security and privacy analysis
+
+Pithus also provides analysis capabilities focused on application security and privacy.
+
+These include:
+
+- Packer detection: Identify compilers, packers, obfuscators and related characteristics.
+- Tracker detection: Identify third-party components associated with advertising, analytics and data collection.
+- Manifest analysis: Identify potentially insecure Android manifest configurations.
+- Network configuration analysis: Detect configuration issues, such as the use of unencrypted network traffic.
+- Code analysis: Identify common vulnerabilities and potentially suspicious code patterns.
+- NIAP and OWASP analysis: Assess applications against security requirements and well-known security standards.
+- Behaviour analysis: Identify locations in application code associated with common behaviours.
+
+The results provide useful investigative information, but they should be interpreted in context rather than treated as definitive proof of malicious activity.
+
+## How does Pithus work?
+
+Pithus combines multiple specialised tools to perform static analysis of Android applications.
+
+Each tool contributes different information to the overall analysis.
+
+Some of the tools and services used by Pithus include:
+
+| Tool |	Purpose |
+|-------|------------|
+| APKiD |	Identifies compilers, packers and obfuscation characteristics |
+| AndroGuard |	Analyses Android applications and their components |
+| MobSF |	Provides mobile application security analysis |
+| Quark-Engine |	Identifies potentially malicious behaviours through rule-based analysis |
+| Exodus-core |	Identifies known third-party trackers |
+| ssdeep |	Supports fuzzy hashing and file similarity analysis |
+| Dexofuzzy |	Supports similarity analysis of Android application code |
+| MalwareBazaar |	Provides external malware intelligence and sample sharing |
+
+By combining the results of these tools, Pithus provides a broader view of an application's technical characteristics.
+
+## Important limitations
+
+Before using Pithus, it is important to understand some of its limitations.
+
+- Static analysis: Pithus analyses application files without executing them. Consequently, runtime behaviour cannot be fully observed through static analysis alone.
+- Detection accuracy: Automated analysis may produce false positives or miss certain threats. Findings should be independently assessed.
+- Analysis coverage: The results depend on the capabilities and limitations of the integrated analysis tools.
+- External intelligence: Information retrieved from external services may be incomplete or unavailable.
+- Beta status: Pithus is an evolving platform. Features and functionality may change between development versions.
+
+Additionally, samples detected as malicious are automatically uploaded to MalwareBazaar when configured.
+
+For more information about the project, visit the [Pithus GitHub repository](https://github.com/Pithus/bazaar).

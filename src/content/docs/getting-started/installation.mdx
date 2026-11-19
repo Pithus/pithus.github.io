@@ -1,0 +1,88 @@
+---
+title: Local installation
+description: Install and run Pithus locally using Docker Compose.
+sidebar:
+  order: 2
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+
+This guide explains how to install and run Pithus in a local environment using Docker Compose. This documentation is mostly aimed at developers.
+
+A local installation is useful to avoid sharing the application you want to analyse, but you will not benefit on the large database of already published samples that are available on our public instance.
+
+If you intend to operate a publicly accessible instance, refer to the Deployment guide instead.
+
+## Downloading Pithus
+
+Clone the official Pithus repository:
+
+```bash
+git clone https://github.com/Pithus/bazaar.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd bazaar
+```
+
+The repository contains the application source code, Dockerfiles, configuration files and Docker Compose definitions required to run Pithus.
+
+## Building the application
+
+Pithus provides a Docker Compose configuration for local development named local.yml.
+
+Build the Docker images using:
+
+```bash
+docker compose -f local.yml build
+```
+
+The initial build may take some time depending on your internet connection and available system resources.
+
+## Starting Pithus
+
+Once the images have been built, start the application:
+
+```bash
+docker compose -f local.yml up
+```
+
+Alternatively, you can run the services in the background:
+
+```bash
+docker compose -f local.yml up -d
+```
+
+and monitor the logs with:
+
+```bash
+docker compose -f local.yml logs -f
+```
+
+The application takes a little time to start, be patient. The django and worker services are the last ones to start.
+
+## Accessing your local instance
+
+Once the services have all started, open your browser and navigate to:
+
+http://localhost:8001
+
+
+## Creating an administrator account
+
+If you need access to the Django administration interface, you can create a superuser account.
+
+Run:
+
+```bash
+docker compose -f local.yml run --rm django python manage.py createsuperuser
+```
+
+Follow the interactive prompts to configure the account.
+
+Once the account has been created, access the administration interface at: http://localhost:8001/admin
+

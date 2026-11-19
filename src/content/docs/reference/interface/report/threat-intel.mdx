@@ -1,0 +1,35 @@
+---
+title: Threat Intel tab
+description: describe the threat intel tab
+sidebar:
+  order: 3
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+## Hunting matches
+
+![hunting matches](/src/assets/doc/threatintelhunting.png)
+
+This information is only available when public yara rules match a sample. When a sample is analysed, it will be tested against each user-defined public yara rules on the platform. To create your own yara rules, this is done in the [workspace](/reference/interface/workspace).
+
+## Sample Timeline
+
+![timeline](/src/assets/doc/threatinteltimeline.png)
+
+The sample timeline is a summary of known dated events, giving more insight in the sample's lifecycle.
+
+## Similar Samples
+
+![similar](/src/assets/doc/threatintelsimilar.png)
+
+This information computed by Pithus, displays the other applications that share some part of their code or assets in common with the one being analysed. This might indicate a proximity in use or, if those samples are different in appearance, it might indicate a possible malicious application.
+
+High similarity and different apparent names indicate that those applications are suspicious.
+
+## VirusTotal
+
+![vt](/src/assets/doc/threatintelvt.png)
+
+This information is being gathered from VirusTotal and shows a summary of VT's analysis. A link to the original report is available to quickly switch to the original, more detailed VT information.

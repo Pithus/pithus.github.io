@@ -1,0 +1,152 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+
+const isHomepage = Astro.url.pathname === import.meta.env.BASE_URL;
+
+const supporters = [
+  {
+    name: 'NLnet',
+    url: 'https://nlnet.nl',
+    logo: './src/assets/supportedby/NLnet.svg',
+  },
+  {
+    name: 'MobiFree',
+    url: 'https://nlnet.nl/mobifree',
+    logo: './src/assets/supportedby/NGI_Mobifree_tag.svg',
+  },
+  {
+    name: 'Defensive Lab Agency',
+    url: 'https://defensive-lab.agency',
+    logo: './src/assets/supportedby/DLA.png',
+  },
+  {
+    name: 'CiviCERT',
+    url: 'https://www.civicert.org',
+    logo: './src/assets/supportedby/CiviCERT-logo.png',
+  },
+];
+---
+
+
+<footer>
+<Default {...Astro.props} />
+{isHomepage && (
+  <section class="supports">
+    <h2>Supported by</h2>
+
+    <div class="logos">
+      {supporters.map((item) => (
+        <a href={item.url} target="_blank" rel="noopener noreferrer">
+          <img src={item.logo} alt={item.name} />
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+  <div class="footer-bottom">
+    <div class="footer-links">
+      <a href="/privacy/">Privacy policy</a>
+      <a href="/contact/">Contact</a>
+      <a href="/code-of-conduct/">Code of conduct</a>
+    </div>
+
+    <div class="copyright">
+      © 2026 Pithus · Open source software
+    </div>
+</div>
+</footer>
+
+<style>
+
+  h2 {
+    font-size: var(--sl-text-xl);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+  }
+
+  .supports {
+    padding: 3rem 1rem 1.5rem;
+    border-top: 1px solid var(--sl-color-gray-5);
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+
+  .logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .logos a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 130px;
+    height: 65px;
+    background: var(--sl-color-gray-5);
+    border-radius: 12px;
+    margin: 0.5rem;
+    transition: background 0.2s ease;
+    padding: 1rem;
+  }
+
+  .logos a:hover {
+    background: var(--sl-color-gray-4);
+  }
+
+  .logos img {
+    max-width: 100%;
+    max-height: 55px;
+    object-fit: contain;
+  }
+
+.footer-bottom {
+  border-top: 1px solid var(--sl-color-gray-5);
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 auto;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  color: var(--sl-color-gray-3);
+  font-size: var(--sl-text-xs);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--sl-color-accent);
+}
+
+.copyright {
+  color: var(--sl-color-gray-3);
+  font-size: var(--sl-text-xs);
+  text-align: right;
+}
+
+@media (max-width: 40rem) {
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .copyright {
+    text-align: center;
+  }
+}
+</style>

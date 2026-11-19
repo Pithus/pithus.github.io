@@ -1,0 +1,267 @@
+---
+title: Production Deployment
+description: Deploy and operate a production Pithus instance using Docker Compose.
+sidebar: 
+    order: 3
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+
+
+## Production Deployment
+
+Pithus provides a dedicated Docker Compose configuration named production.yml, which defines the application and its supporting infrastructure.
+
+This guide assumes you are familiar with Docker, Linux administration and basic server operations.
+
+## Architecture overview
+
+The production configuration defines several services that work together to provide the Pithus platform.
+
+| Service| 	Purpose|
+|--- |--- |
+|Django |	Main Pithus web application |
+|Worker |	Processes background analysis tasks |
+|PostgreSQL |	Holds user data |
+|Redis |	Cache and application coordination |
+|Elasticsearch |	Stores and indexes application analysis reports |
+|MobSF |	Provides mobile application security analysis |
+|RustFS |	Object storage for application files |
+|Traefik |	Reverse proxy and HTTPS entry point |
+|Prometheus |	Metrics collection |
+|Grafana |	Metrics visualization |
+
+The configuration also defines persistent Docker volumes for the database, Elasticsearch, object storage, monitoring data and Traefik certificates.
+
+## Hardware requirements
+
+Pithus services consume significant system resources, big CPU loads during analysis, and high memory usage overall.
+
+When planning to run a public instance, also consider disk space usage, as each APK is stored on disk, and analysis may generate quite an heavy amount of files depending on the application.
+
+By default, ElasticSearch is set to start with a 6GB java heap size, which you can change in `production.yml`:
+
+```yaml
+ES_JAVA_OPTS=-Xms6G -Xmx6G
+```
+
+As a reference point, the Pithus public instance runs on the following configuration:
+
+CPU: 8 Core
+RAM: 32 GB
+Disk: 2 TB
+
+
+## Downloading Pithus
+
+Clone the official repository:
+
+```bash
+git clone https://github.com/Pithus/bazaar.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd bazaar
+```
+
+The production Docker Compose configuration is located at:
+
+```text
+production.yml
+```
+
+## Configuring the environment
+
+Before starting the deployment, prepare the environment files expected by the production Compose configuration.
+
+The production configuration uses the following directory:
+
+```text
+.envs/
+└── .production/
+    ├── .django
+    ├── .postgres
+    ├── .elastic
+    └── .grafana
+```
+
+These files contain the configuration and credentials required by the different services.
+
+### Django configuration
+
+The `.envs/.production/.django` file contains the configuration required by the Django application.
+
+|Variable|	Description|
+|--- |--- |
+|DJANGO_SECRET_KEY |	Secret key used by Django |
+|DJANGO_ALLOWED_HOSTS |	Hostnames permitted to access the application |
+|DJANGO_ADMIN_URL |	URL path for the Django administration interface |
+|DATABASE_URL |	PostgreSQL connection string |
+|REDIS_URL |	Redis connection URL |
+|RUSTFS_ACCESS_KEY |	RustFS access key |
+|RUSTFS_SECRET_KEY |	RustFS secret key |
+|SENTRY_DSN |	Sentry configuration for error monitoring |
+
+Generate unique and sufficiently random secret keys for your deployment. Never reuse a development secret key in production.
+
+### PostgreSQL configuration
+
+The `.envs/.production/.postgres` file contains the database configuration.
+
+Configure the PostgreSQL database name, username and password.
+Ensure that these values are consistent with the database connection string defined in the Django environment configuration.
+
+### Elasticsearch configuration
+
+The `.envs/.production/.elastic` file contains the Elasticsearch configuration.
+
+The production Compose configuration uses Elasticsearch 8.19.10 and configures it as a single-node cluster.
+
+### Grafana configuration
+
+The `.envs/.production/.grafana` file contains the configuration required by Grafana.
+
+### Configuring the domain and HTTPS
+
+The production configuration includes Traefik as a reverse proxy.
+
+Traefik exposes the following ports on the host:
+- 80:	HTTP traffic, set to redirect to HTTPS
+- 443	HTTPS traffic
+
+Before starting the deployment:
+
+- Configure your domain to resolve to the server's public IP address.
+- Make sure ports 80 and 443 are accessible.
+
+Then, edit the file `./compose/production/traefik/traefik.yml`, and change:
+- the domain names in the `http` section
+- the email in the `certificatesResolvers` section
+
+Ensure that the Django `DJANGO_ALLOWED_HOSTS` setting in `.envs/.production/.django` includes the hostname used.
+
+## Building the production images
+
+Once the environment files have been prepared, build the production Docker images:
+
+```bash
+docker compose -f production.yml build
+```
+
+The initial build may take some time depending on your server resources and network connection.
+
+## Starting the production deployment
+
+Start the services in the background:
+
+```bash
+docker compose -f production.yml up -d
+```
+
+## Verifying the deployment
+
+Check the status of all services:
+
+```bash
+docker compose -f production.yml ps
+```
+
+Inspect the logs:
+
+```bash
+docker compose -f production.yml logs
+```
+
+To follow the Django logs:
+
+```bash
+docker compose -f production.yml logs -f django
+```
+
+To inspect the background worker:
+
+```bash
+docker compose -f production.yml logs -f worker
+```
+
+Once the deployment is operational, access Pithus through the configured domain:
+
+```text
+https://pithus.example.org
+```
+
+## Management and common operations
+
+### Viewing logs
+
+Inspect all service logs:
+
+```bash
+docker compose -f production.yml logs
+```
+
+Follow the logs of an individual service:
+
+```bash
+docker compose -f production.yml logs -f worker
+```
+
+### Restarting services
+
+Restart all services:
+
+```bash
+docker compose -f production.yml restart
+```
+
+Restart an individual service:
+
+```bash
+docker compose -f production.yml restart django
+```
+
+### Stopping the deployment
+
+To stop the application:
+
+```bash
+docker compose -f production.yml down
+```
+
+This stops and removes the containers and associated Compose network.
+
+Named volumes are retained unless explicitly removed.
+
+<Aside type="danger">Do not use `docker compose down -v` during routine maintenance. This can remove persistent application data.</Aside>
+
+### Updating Pithus
+
+To retrieve the latest changes from the repository:
+
+```bash
+git pull
+```
+
+Before applying an update to production, review the changes and identify any modifications to:
+
+- Django settings.
+- Environment variables.
+- Database models and migrations.
+- Docker images.
+- Service dependencies.
+- Storage configuration.
+
+After reviewing the changes, rebuild the images:
+
+```bash
+docker compose -f production.yml build
+```
+
+Recreate the services:
+
+```bash
+docker compose -f production.yml up -d
+```

@@ -1,0 +1,31 @@
+---
+title: Reference overview
+description: overview of reference
+sidebar:
+  order: 0
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+import { CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+    <LinkCard 
+        title="Interface Reference"
+        href="/reference/interface/homepage"
+        description="Description of the interface"
+    />
+
+    <LinkCard 
+        title="API Reference"
+        href="/api/"
+        description="Pithus API reference"
+    />
+
+    <LinkCard 
+        title="API Client Reference"
+        href="/reference/api-client"
+        description="Pythus: python API client for Pithus"
+    />
+
+
+</CardGrid>
